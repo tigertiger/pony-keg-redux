@@ -3,6 +3,8 @@ import NewKegForm from "./NewKegForm";
 import KegList from "./KegList";
 import KegDetail from "./KegDetail";
 import { v4 } from 'uuid';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 class KegControl extends React.Component {
 
@@ -10,38 +12,6 @@ class KegControl extends React.Component {
     super(props);
     this.state = {
       formVisibleOnPage:false,
-      mainKegList: [
-        {
-          beer: 'Blind Pig',
-          style: 'IPA',
-          brewery: 'Russian River',
-          description: 'Full-bodied, very hoppy, with citrus, pine, fruity notes, and a nice dry, bitter finish!',
-          abv: '6.25',
-          price: '319',
-          id: v4(),
-          pintsLeft: 124
-        },
-        {
-          beer: 'Pallet Jack',
-          style: 'IPA',
-          brewery: 'Barley Brown\'s',
-          description: 'Multiple dry hop additions deliver an awesome hop aroma filled with citrus, tropical fruit, and a touch of pine. The light body has just enough malt complexity to balance the hops. Multi time GABF medalist.',
-          abv: '7.2',
-          price: '250',
-          id: v4(),
-          pintsLeft: 124
-        },
-        {
-          beer: 'German Pale Ale',
-          style: '',
-          brewery: 'Rosenstadt',
-          description: 'Rosenstadt German Pale Ale is hop-forward in the American fashion. German Polaris, Mandarina Bavaria and Amarillo hops have some American heritage, and create an unusual flavor profile with notes of tangerine, orange, and mint.    ',
-          abv: '5.4',
-          price: '250',
-          id: v4(),
-          pintsLeft: 124
-        }
-      ],
       selectedKeg: null
     };
   }
@@ -60,18 +30,61 @@ class KegControl extends React.Component {
   }
 
   handleAddingNewKeg = (newKeg) => {
-    const newMainKegList = this.state.mainKegList.concat(newKeg);
-    this.setState({mainKegList: newMainKegList,
-    formVisibleOnPage:false});
+    const { dispatch } = this.props;
+    const {beer, style, brewery, description, abv, price, pintsLeft} = newKeg;
+    const action = {
+      type: 'ADD_KEG',
+      beer: beer,
+      style: style,
+      brewery: brewery,
+      description: description,
+      abv: abv,
+      price: price,
+      id: v4(),
+      pintsLeft: pintsLeft
+    }
+    dispatch(action);
+    this.setState({formVisibleOnPage:false});
+  }
+
+  handleEditingKegInList = (kegToEdit) => {
+    const { dispatch } = this.props;
+    const { beer, style, brewery, description, abv, price, id, pintsLeft } = kegToEdit;
+    const action = {
+      type: 'ADD_KEG',
+      beer: beer,
+      style: style,
+      brewery: brewery,
+      description: description,
+      abv: abv,
+      price: price,
+      id: id,
+      pintsLeft: pintsLeft,
+    }
+    dispatch(action);
+    this.setState({
+      editing:false,
+      selectedKeg: null
+    });
+  }
+
+  handleDeletingKeg = (id) => {
+    const { dispatch } = this.props;
+    const action = {
+      type: 'DELETE_KEG',
+      id: id
+    }
+    dispatch(action);
+    this.setState({selectedKeg: null});
   }
 
   handleChangingSelectedKeg = (id) => {
-    const selectedKeg = this.state.mainKegList.filter(keg => keg.id === id)[0];
+    const selectedKeg = this.props.mainKegList[id];
     this.setState({selectedKeg: selectedKeg});
   }
 
-  handleSellPint = () => {
-    let tappingKeg = this.state.mainKegList.filter(keg => keg.id === this.state.selectedKeg.id)[0];
+  handleSellPint = (id) => {
+    let tappingKeg = this.props.mainKegList[id];
 
     if (tappingKeg.pintsLeft === 0) {
       alert("This Keg is Tapped!");
@@ -87,8 +100,8 @@ class KegControl extends React.Component {
     }
   }
 
-  handleFreshKeg = () => {
-    let freshKeg = this.state.mainKegList.filter(keg => keg.id === this.state.selectedKeg.id)[0];
+  handleFreshKeg = (id) => {
+    let freshKeg = this.props.mainKegList[id];
 
     freshKeg.pintsLeft = 124;
 
@@ -111,7 +124,7 @@ class KegControl extends React.Component {
       buttonText = "Back to Keg List";
     } else {
       currentlyVisibleState = 
-      <KegList kegList={this.state.mainKegList} onKegSelection={this.handleChangingSelectedKeg} />
+      <KegList kegList={this.props.mainKegList} onKegSelection={this.handleChangingSelectedKeg} />
       buttonText = "Add a Keg"
     }
     return (
@@ -122,5 +135,17 @@ class KegControl extends React.Component {
     );
   }
 }
+
+KegControl.propTypes = {
+  mainKegList: PropTypes.object
+}
+
+const mapStateToProps = state => {
+  return {
+    mainKegList: state
+  }
+}
+
+KegControl = connect(mapStateToProps)(KegControl);
 
 export default KegControl;
