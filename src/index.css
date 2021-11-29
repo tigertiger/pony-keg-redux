@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Estonia&family=Josefin+Sans:ital,wght@0,100;0,200;0,300;1,100;1,200;1,300&display=swap');
+
+body {
+  font-family: 'Josefin Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.card {
+  margin:10px 0 10px 0;
+  padding:10px;
+}
+
+h1 {
+  font-family: 'Estonia', cursive;
+  font-size:80pt;
+  margin-top:-30px;
+}
+
+#headerText {
+  text-align:center;
+  padding: 2% 0 3% 0;
+}
+
+#horseFriend {
+  border-radius:50%;
+}
+
+#kegGrid {
+  margin:auto;
+  display:grid;
+  grid-template-areas:
+  'main main main';
+}
+
+#friendButton {
+  display:block;
+  margin:20px auto 50px;
+  padding: 5px 10px;
+}
+
+#sellPint {
+  width: 90px;
+  margin:5px 0;
+}
+
+#freshKeg {
+  width:90px;
+  margin:5px 0;
+}
